@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Button, View, TextInput } from "react-native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 class SignUp extends Component {
   constructor(props) {
@@ -19,10 +20,13 @@ class SignUp extends Component {
     const auth = getAuth();
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         // Signed in
         const user = userCredential.user;
-        // ...
+        // Add a new user in collection "users"
+        await setDoc(doc(db, "users"), {
+          email: email,
+        });
       })
       .catch((error) => {
         console.log("Error in onSignUp(): ", error);

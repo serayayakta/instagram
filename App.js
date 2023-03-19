@@ -1,27 +1,24 @@
 import React, { Component } from "react";
-import * as Firebase from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { firebase } from "./firebase/config";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text } from "react-native";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
+import rootReducer from "./redux/reducers";
+import thunk from "redux-thunk";
 import Landing from "./components/Landing";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import Home from "./components/Home";
 
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: [thunk],
+});
 const Stack = createNativeStackNavigator();
-const firebaseConfig = {
-  apiKey: "AIzaSyCbHwpBCkJ_21PbQpn7R4i4qrtfhTATyiE",
-  authDomain: "instagram-3ac83.firebaseapp.com",
-  projectId: "instagram-3ac83",
-  storageBucket: "instagram-3ac83.appspot.com",
-  messagingSenderId: "544322665540",
-  appId: "1:544322665540:web:0edbdfef7d15206b2f9011",
-  measurementId: "G-H1XN1QM4VF",
-};
-
-if (Firebase.getApps.length === 0) {
-  Firebase.initializeApp(firebaseConfig);
-}
 
 export default class App extends Component {
   constructor(props) {
@@ -33,17 +30,13 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    const auth = getAuth();
-
-    onAuthStateChanged(auth, (user) => {
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // User is signed in
         this.setState({
           loggedIn: true,
           loaded: true,
         });
       } else {
-        // User is signed out
         this.setState({
           loggedIn: false,
           loaded: true,
@@ -51,9 +44,9 @@ export default class App extends Component {
       }
     });
   }
-
   render() {
     const { loggedIn, loaded } = this.state;
+
     if (!loaded) {
       return (
         <View>
@@ -62,12 +55,20 @@ export default class App extends Component {
       );
     }
 
+    if (loggedIn) {
+      return (
+        <Provider store={store}>
+          <Home />
+        </Provider>
+      );
+    }
+
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Landing">
-          <Stack.Screen name="Landing" component={Landing}></Stack.Screen>
-          <Stack.Screen name="Login" component={Login}></Stack.Screen>
-          <Stack.Screen name="SignUp" component={SignUp}></Stack.Screen>
+          <Stack.Screen name="Landing" component={Landing} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="SignUp" component={SignUp} />
         </Stack.Navigator>
       </NavigationContainer>
     );
