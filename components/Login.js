@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Button, View, TextInput } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { connect } from "react-redux";
+import { setCurrentUser } from "../redux/userSlice";
 
 class Login extends Component {
   constructor(props) {
@@ -20,8 +22,13 @@ class Login extends Component {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
-        const user = userCredential.user;
-        // ...
+        const currentUser = {
+          id: userCredential.user.providerData.uid,
+          email: this.state.email,
+        };
+
+        this.props.setCurrentUser(currentUser);
+        this.props.navigation.navigate("Home");
         console.log(userCredential);
       })
       .catch((error) => {
@@ -47,4 +54,8 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(null, mapDispatchToProps)(Login);

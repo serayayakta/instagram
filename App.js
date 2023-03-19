@@ -6,18 +6,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text } from "react-native";
 import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import rootReducer from "./redux/reducers";
-import thunk from "redux-thunk";
 import Landing from "./components/Landing";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import Home from "./components/Home";
+import store from "./redux/store";
 
-const store = configureStore({
-  reducer: rootReducer,
-  middleware: [thunk],
-});
 const Stack = createNativeStackNavigator();
 
 export default class App extends Component {
@@ -31,6 +25,7 @@ export default class App extends Component {
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
+      console.log("firebasee user: ", user);
       if (user) {
         this.setState({
           loggedIn: true,
@@ -44,8 +39,9 @@ export default class App extends Component {
       }
     });
   }
+
   render() {
-    const { loggedIn, loaded } = this.state;
+    const { loaded } = this.state;
 
     if (!loaded) {
       return (
@@ -55,22 +51,17 @@ export default class App extends Component {
       );
     }
 
-    if (loggedIn) {
-      return (
-        <Provider store={store}>
-          <Home />
-        </Provider>
-      );
-    }
-
     return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Landing">
-          <Stack.Screen name="Landing" component={Landing} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Landing">
+            <Stack.Screen name="Landing" component={Landing} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen name="Home" component={Home} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     );
   }
 }

@@ -1,29 +1,19 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { View, Text } from "react-native";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { fetchUser } from "../redux/actions/index";
 
-export class Home extends Component {
-  componentDidMount() {
-    this.props.fetchUser();
-  }
+const Home = () => {
+  const currentUser = useSelector((state) => state.user.currentUser);
 
-  render() {
-    return (
-      <View>
+  return (
+    <View>
+      {currentUser ? (
         <Text>User is logged in</Text>
-      </View>
-    );
-  }
-}
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      fetchUser,
-    },
-    dispatch
+      ) : (
+        <Text>User is not logged in</Text>
+      )}
+    </View>
   );
+};
 
-export default connect(null, mapDispatchToProps)(Home);
+export default Home;

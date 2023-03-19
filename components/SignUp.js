@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Button, View, TextInput } from "react-native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { connect } from "react-redux";
+import { setCurrentUser } from "../redux/userSlice";
 
 class SignUp extends Component {
   constructor(props) {
@@ -16,17 +17,20 @@ class SignUp extends Component {
   }
 
   onSignUp() {
-    const { email, password, name } = this.state;
+    const { email, password } = this.state;
     const auth = getAuth();
 
     createUserWithEmailAndPassword(auth, email, password)
       .then(async (userCredential) => {
         // Signed in
-        const user = userCredential.user;
-        // Add a new user in collection "users"
-        await setDoc(doc(db, "users"), {
-          email: email,
-        });
+        const currentUser = {
+          id: userCredential.user.providerData.uid,
+          email: this.state.email,
+        };
+
+        this.props.setCurrentUser(currentUser);
+        this.props.navigation.navigate("Home");
+        console.log(userCredential);
       })
       .catch((error) => {
         console.log("Error in onSignUp(): ", error);
@@ -55,4 +59,8 @@ class SignUp extends Component {
   }
 }
 
-export default SignUp;
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+});
+
+export default connect(null, mapDispatchToProps)(SignUp);
