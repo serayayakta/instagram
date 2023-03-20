@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, View, TextInput } from "react-native";
+import { Button, View, TextInput, StyleSheet } from "react-native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { connect } from "react-redux";
 import { setCurrentUser } from "../redux/userSlice";
@@ -41,14 +41,17 @@ class SignUp extends Component {
     return (
       <View>
         <TextInput
+          style={styles.input}
           placeholder="Enter your name.."
           onChangeText={(name) => this.setState({ name })}
         ></TextInput>
         <TextInput
+          style={styles.input}
           placeholder="Enter your email.."
           onChangeText={(email) => this.setState({ email })}
         ></TextInput>
         <TextInput
+          style={styles.input}
           secureTextEntry
           placeholder="Set a password.."
           onChangeText={(password) => this.setState({ password })}
@@ -58,6 +61,15 @@ class SignUp extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+});
 
 const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (user) => dispatch(setCurrentUser(user)),

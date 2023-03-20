@@ -10,7 +10,7 @@ const Post = ({ post }) => {
             key={url}
             source={{ uri: url, height: 200 }}
             height="200"
-            resizeMode="cover"
+            resizeMode="contain"
           />
         );
       })
@@ -31,9 +31,7 @@ const Post = ({ post }) => {
 
 const styles = StyleSheet.create({
   media: {
-    width: 200,
     height: 200,
-    justifyContent: "center",
   },
 });
 
