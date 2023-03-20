@@ -56,7 +56,13 @@ class SignUp extends Component {
           placeholder="Set a password.."
           onChangeText={(password) => this.setState({ password })}
         ></TextInput>
-        <Button title="Sign Up" onPress={() => this.onSignUp()}></Button>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Sign Up"
+            color="#121212"
+            onPress={() => this.onSignUp()}
+          ></Button>
+        </View>
       </View>
     );
   }
@@ -68,6 +74,11 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 50,
   },
 });
 
